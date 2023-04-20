@@ -25,7 +25,6 @@ public class PCOS {
 	private void LoadAZRecipes() throws InterruptedException, IOException {
 		WebElement btnAZ = Common_Code.chromeDriver.findElement(By.xpath("//a[@title='Recipea A to Z']"));
 		btnAZ.click();
-		//LoadRecipes("Y", Common_Code.PCOSEliminate);
 		LoadRecipes("U", Common_Code.PCOSEliminate, "PCOS");
 		LoadRecipes("U", Common_Code.HyperTensionEliminate, "HTension");
 	}

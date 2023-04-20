@@ -1,7 +1,10 @@
 package Recipes;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.poi.xssf.usermodel.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -34,14 +37,32 @@ public class Common_Code {
 			"Recipe URL"
 			};
 	@Test(priority = 1)
-	private void LoadPage() throws InterruptedException, IOException {
-		
+	private void LoadPage() throws InterruptedException, IOException {		
 		ChromeOptions optChrome = new ChromeOptions();
 		optChrome.setAcceptInsecureCerts(true);
 		optChrome.addArguments("--remote-allow-origins=*");
+		ReadEliminationsFromExcel();
 		chromeDriver = new ChromeDriver(optChrome);
 		//chromeDriver = new FirefoxDriver();
-		chromeDriver.get("https://tarladalal.com/");		
+		chromeDriver.get("https://tarladalal.com/");	
 		//chromeDriver.manage().window().maximize();
 	}
+	
+	//@Test
+	public void ReadEliminationsFromExcel() throws IOException
+	{
+		System.out.print(System.getProperty("user.dir"));
+		
+		String path = System.getProperty("user.dir")+"\\IngredientsAndComorbidities-ScrapperHackathon.xlsx";
+		File excelfile = new File(path);
+		FileInputStream fis = new FileInputStream(excelfile);
+		XSSFWorkbook workbook = new XSSFWorkbook(fis);
+		XSSFSheet sheet = workbook.getSheet("EliminatedItems");
+	    XSSFRow row=sheet.getRow(0);
+	    XSSFCell cell=row.getCell(0);
+	    String strItem = cell.getStringCellValue();
+	    System.out.println(strItem);
+	    workbook.close();		
+	}
+
 }
