@@ -4,6 +4,7 @@
   <test thread-count="5" name="Test">
     <classes>
       <class name="Recipes.Common_Code"/>
+      <class name="Recipes.PCOS"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
