@@ -2,6 +2,7 @@ package Recipes;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,26 +25,9 @@ import org.testng.annotations.Test;
 
 public class CommonCode {
 	public static WebDriver chromeDriver;
-	//public static String strFilteredRecipes = "C:/NumpyNinja_Projects/Hackathon/FilteredRecipes.xlsx";
-	//public static String strFilteredRecipes = "C:/GitRepository/Hackathon/src/test/resources/ExcelFiles/FilteredRecipes.xlsx";
 	public static String strFilteredRecipes =  System.getProperty("user.dir")
 				+ "\\src\\test\\resources\\ExcelFiles\\FilteredRecipes.xlsx";
 	
-	/*public static String strDiabetesExcel = "C:/NumpyNinja_Projects/Hackathon/Diabetes.xlsx";
-	public static String strPCOSExcel = "C:/NumpyNinja_Projects/Hackathon/PCOS.xlsx";
-	public static String strHThyroidExcel = "C:/NumpyNinja_Projects/Hackathon/hThyroid.xlsx";
-	public static String strHTensionExcel = "C:/NumpyNinja_Projects/Hackathon/HTension.xlsx";
-	*/
-	
-/*	public static String[] PCOSEliminate = {"Cake", "Pastries","White bread", "Fried", "Pizza", "Burger","Carbonated beverages",
-			 "sweet", "icecream","soda","juice","Red meat", "Processed meat", "Dairy",
-			 "Soy", "Gluten" ,"Pasta", "White rice", "Doughnut", "Fries", "Coffee", "Seed oils",
-			"vegetable oil", "soybean oil", "canola oil", "rapeseed oil", "sunflower oil", "safflower oil"};
-	
-	public static String[] HyperTensionEliminate = {"chips","pretzels","crackers", "coffee", "tea", "soft drink", 
-			"Alcohol", "Frozen food", "meat", "bacon", "ham", "Pickles", "Processed", "canned",
-			"Fried", "Sauce", "mayonnaise", "sausage","White rice","white bread", "pav"};
-*/
 	
 	public static String[] strHeading = {"Recipe ID",
 			"Recipe Name: ",
@@ -62,6 +46,9 @@ public class CommonCode {
 	public static List<String> lstHypertension = new ArrayList<String>();
 	public static List<String> lstPCOS = new ArrayList<String>();
 	public static List<String> lstHDiabetes = new ArrayList<String>();
+	public static List<String> lstHHThyroidism = new ArrayList<String>();
+	public static List<String> lstHHTension = new ArrayList<String>();
+	public static List<String> lstHPCOS = new ArrayList<String>();
 	
 	//load home page of website of tarladalal.com
 	@Test(priority = 1)
@@ -144,10 +131,38 @@ public class CommonCode {
 		    	lstHDiabetes.add(strItem.strip());
 		    }
 		}
+		for (i=2;i<lastRow;i++) {
+			row=sheet.getRow(i);
+		    cell=row.getCell(3);
+
+		    strItem = cell.getStringCellValue();
+		    if (!strItem.isBlank()){
+		    	lstHHThyroidism.add(strItem.strip());
+		    }
+		}
+		for (i=2;i<lastRow;i++) {
+			row=sheet.getRow(i);
+		    cell=row.getCell(5);
+
+		    strItem = cell.getStringCellValue();
+		    if (!strItem.isBlank()){
+		    	lstHHTension.add(strItem.strip());
+		    }
+		}
+		for (i=2;i<lastRow;i++) {
+			row=sheet.getRow(i);
+		    cell=row.getCell(7);
+
+		    strItem = cell.getStringCellValue();
+		    if (!strItem.isBlank()){
+		    	lstHPCOS.add(strItem.strip());
+		    }
+		}
+		
 	    workbook.close();	
 	  }
 	
-	public static void CheckForHealthyItems(List<String> healthyItems) throws IOException {
+	public static void CheckForHealthyItems(List<String> healthyItems, int sheetNo) throws IOException {
 		XSSFRow row;
 		XSSFCell cell;		
 		boolean bFound=false;
@@ -162,16 +177,8 @@ public class CommonCode {
 		if(bFileExists) {
 			FileInputStream myxls = new FileInputStream(CommonCode.strFilteredRecipes);
 			wb = new XSSFWorkbook(myxls);
-		    XSSFSheet sheet = wb.getSheetAt(0);
-
-		    XSSFFont font = wb.createFont();
-        	CellStyle cs = wb.createCellStyle();
-        	font.setColor(IndexedColors.BLUE.getIndex());
-			font.setBold(true);
-			cs.setFont(font);
-
-			int lastRow=sheet.getLastRowNum();
-			
+		    XSSFSheet sheet = wb.getSheetAt(sheetNo);
+			int lastRow=sheet.getLastRowNum();			
 		    for(i=0;i<lastRow;i++){
 		    	row = sheet.getRow(i);		    	
 		    	cell = row.getCell(9);
@@ -181,21 +188,74 @@ public class CommonCode {
 
 		    		for (String item: healthyItems ) {
 				        bFound = ingredient.contains(item.toLowerCase());
-				        if (bFound) {				
-							row.setRowStyle(cs);
-							//System.out.println(row.getRowNum());
+				        if (bFound) {
+				        	XSSFFont font = wb.createFont();
+				        	CellStyle cs = wb.createCellStyle();
+				        	font.setColor(IndexedColors.GREEN.getIndex());
+							font.setBold(true);
+							//font.setColor(new XSSFFont().COLOR_RED);
+							cs.setFont(font);
+							for(int x=0;x<11;x++)
+							{
+								cell = row.getCell(x);
+								cell.setCellStyle(cs);
+							}
+							System.out.println(row.getRowNum() + " : " + item);
 				        	break;
 				    	   	}
 				   	}
 		    		if(!bFound) {
-		    			row.setRowStyle(null);
 		    			continue;
 		    		}
 		    		bFound = false;	
 		    	}
 		    }
+			FileOutputStream fileOut = new FileOutputStream(CommonCode.strFilteredRecipes);
+			wb.write(fileOut);
+			fileOut.close();
 		    wb.close();
 		}
 	}
+	
+	public static void CheckForAllergy(String allergy, int sheetNo) throws IOException {
+		XSSFRow row;
+		XSSFCell cell;		
+		boolean bFound=false;
+		int i;
+		String ingredient="";
+		Path p = Paths.get(CommonCode.strFilteredRecipes);
+		boolean bFileExists = Files.exists(p);
+		
+		XSSFWorkbook wb;
 
+		//if file already exists, check for the last row number
+		if(bFileExists) {
+			FileInputStream myxls = new FileInputStream(CommonCode.strFilteredRecipes);
+			wb = new XSSFWorkbook(myxls);
+		    XSSFSheet sheet = wb.getSheetAt(sheetNo);
+			int lastRow=sheet.getLastRowNum();			
+		    for(i=0;i<lastRow;i++){
+		    	row = sheet.getRow(i);		    	
+		    	cell = row.getCell(9);
+	    		cell = row.getCell(4);
+	    		ingredient = cell.getStringCellValue().toLowerCase();	
+		        bFound = ingredient.contains(allergy.toLowerCase());
+		        if (bFound) {
+		        	XSSFFont font = wb.createFont();
+		        	CellStyle cs = wb.createCellStyle();
+		        	font.setColor(IndexedColors.RED.getIndex());
+					font.setBold(true);
+					cs.setFont(font);
+					cell = row.createCell(11);
+					cell.setCellStyle(cs);
+					cell.setCellValue(allergy);
+					System.out.println(row.getRowNum());
+		        }
+		    }
+			FileOutputStream fileOut = new FileOutputStream(CommonCode.strFilteredRecipes);
+			wb.write(fileOut);
+			fileOut.close();
+		    wb.close();
+		}
+	}
 }

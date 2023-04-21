@@ -24,17 +24,24 @@ public class FilteredRecipes {
 	private void LoadAZRecipes() throws InterruptedException, IOException {
 		WebElement btnAZ = CommonCode.chromeDriver.findElement(By.xpath("//a[@title='Recipea A to Z']"));
 		btnAZ.click();
-		//LoadRecipes("Z", CommonCode.lstDiabetes, "Diabetes");
-		//LoadRecipes("Z", CommonCode.lstHypothyroidism, "Hypothyroidism");
-		//LoadRecipes("Z", CommonCode.lstHypertension, "Hypertension");
-		LoadRecipes("A", CommonCode.lstPCOS, "PCOS");
-		//CommonCode.CheckForHealthyItems(CommonCode.lstHDiabetes);
+		//LoadRecipes("Q", CommonCode.lstDiabetes, "Diabetes", 0);
+		//LoadRecipes("Q", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
+		//LoadRecipes("Q", CommonCode.lstHypertension, "Hypertension", 2);
+		//LoadRecipes("Q", CommonCode.lstPCOS, "PCOS", 3);
+		CommonCode.CheckForHealthyItems(CommonCode.lstDiabetes, 0);
+		CommonCode.CheckForHealthyItems(CommonCode.lstHypothyroidism, 1);
+		CommonCode.CheckForHealthyItems(CommonCode.lstHypertension, 2);
+		CommonCode.CheckForHealthyItems(CommonCode.lstPCOS, 3);
+		
+		CommonCode.CheckForAllergy("Milk", 0);
+		CommonCode.CheckForAllergy("Milk", 1);
+		CommonCode.CheckForAllergy("Egg", 2);
+		CommonCode.CheckForAllergy("Egg", 3);
+		
 	}
 	
-	
-	
 	//load the recipes according to a letter and for a particular morbidity
-	private void LoadRecipes(String letter, List<String> eliminate, String strMorbidity) 
+	private void LoadRecipes(String letter, List<String> eliminate, String strMorbidity, int sheetNo) 
 					throws InterruptedException, IOException {
 		WebElement btnAZ = CommonCode.chromeDriver.findElement(By.xpath("//a[text()='" + letter + "']"));
 		btnAZ.click();
@@ -43,20 +50,20 @@ public class FilteredRecipes {
 		int nCount = pages.size()/2;
 		System.out.println("no of pages : " + nCount);
 		int i=0;
-		nCount = 1;
+		nCount = 2;
 		//loop through the pages and check each recipe
 		for(i=1;i<=nCount;i++) {
 			System.out.println("page no. = " + i);
 			WebElement page = CommonCode.chromeDriver.findElement
 					(By.xpath("//*[text()='" + i + "']"));
 			page.click();
-			ScanThruRecipes1(letter,eliminate, strMorbidity);
+			ScanThruRecipes1(letter,eliminate, strMorbidity, sheetNo);
 		}
 	}
 	
 	//scan through each recipe and find whether the recipe has any ingredients from the eliminated ingredients
 	//if the recipe name or ingredients do not have any eliminated ingredient, the recipe details are saved in the excel
-	private void ScanThruRecipes1(String foodCategory, List<String> list, String strMorbidity) 
+	private void ScanThruRecipes1(String foodCategory, List<String> list, String strMorbidity, int sheetNo) 
 					throws InterruptedException, IOException {
 		Thread.sleep(2000);
 		//find the number of recipes on the page
@@ -70,7 +77,7 @@ public class FilteredRecipes {
 		String  xPreparationMethod="", xNValues="", xIngredients="";
 		String ingredients="", nutrientValues="", preparationMethod="", url="";
 		//System.out.println("No. of recipes : " + nRecipes);
-		nRecipes=5;
+		//nRecipes=2;
 		//Scan through all the recipes on the page
 		for(i=1;i<=nRecipes;i++) {
 			//bFound is a flag to check if the recipe has any eliminated ingredient
@@ -97,7 +104,7 @@ public class FilteredRecipes {
 			for (String word: list ) {
 		        bFound = name.toLowerCase().contains(word.toLowerCase());
 		        if (bFound) {
-		        	//System.out.println("Found in name!");
+		        	System.out.println("Found in name! - " + word);
 		        	break;
 		    	   	}
 		   	}
@@ -116,7 +123,7 @@ public class FilteredRecipes {
 			for (String word: list ) {
 		        bFound = ingredients.toLowerCase().contains(word.toLowerCase());
 		        if (bFound) {
-			    	//System.out.println("Found in ingredients!");
+			    	System.out.println("Found in ingredients! - " + word);
 		        	break;
 		    	   	}
 			}
@@ -181,7 +188,8 @@ public class FilteredRecipes {
 			if(bFileExists) {
 				FileInputStream myxls = new FileInputStream(CommonCode.strFilteredRecipes);
 				wb = new XSSFWorkbook(myxls);
-			    XSSFSheet sheet = wb.getSheetAt(0);
+				
+			    XSSFSheet sheet = wb.getSheetAt(sheetNo);
 			    int lastRow=sheet.getLastRowNum();
 			    //System.out.println("last row : " + lastRow); 
 			    row = sheet.createRow(++lastRow);
@@ -191,19 +199,30 @@ public class FilteredRecipes {
 			else {
 				wb = new XSSFWorkbook();
 				CreationHelper ch = wb.getCreationHelper();
-				XSSFSheet sheet = wb.createSheet("Recipes");
-				XSSFRow header = sheet.createRow(0);			
-				for(int k=0;k<CommonCode.strHeading.length;k++) {
-					CellStyle cs = wb.createCellStyle();
-					XSSFFont font = wb.createFont();
-					font.setColor(IndexedColors.BLUE.getIndex());
-					font.setBold(true);
-					cs.setFont(font);
-					cs.setWrapText(true);
-					cell = header.createCell(k);
-					cell.setCellStyle(cs);
-					cell.setCellValue(CommonCode.strHeading[k]);
+				
+				if (wb.getNumberOfSheets()<=1) {
+					wb.createSheet("Diabetes");
+					wb.createSheet("Hypothyroidism");
+					wb.createSheet("Hypertension");
+					wb.createSheet("PCOS");					
 				}
+				for(int z = 0; z<4; z++) {
+					XSSFSheet sheet = wb.getSheetAt(z);
+					XSSFRow header = sheet.createRow(0);			
+					for(int k=0;k<CommonCode.strHeading.length;k++) {
+						CellStyle cs = wb.createCellStyle();
+						XSSFFont font = wb.createFont();
+						font.setColor(IndexedColors.BLUE.getIndex());
+						font.setBold(true);
+						cs.setFont(font);
+						cs.setWrapText(true);
+						cell = header.createCell(k);
+						cell.setCellStyle(cs);
+						cell.setCellValue(CommonCode.strHeading[k]);
+					}
+				}
+				XSSFSheet sheet = wb.getSheet(strMorbidity);
+
 			    //System.out.println("new file"); 
 				row=sheet.createRow(1);
 			}
