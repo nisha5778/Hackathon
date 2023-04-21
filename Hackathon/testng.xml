@@ -3,8 +3,8 @@
 <suite name="Suite">
   <test thread-count="5" name="Test">
     <classes>
-      <class name="Recipes.Common_Code"/>
-      <class name="Recipes.PCOS"/>
+      <class name="Recipes.CommonCode"/>
+      <class name="Recipes.FilteredRecipes"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->

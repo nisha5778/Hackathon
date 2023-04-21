@@ -3,11 +3,11 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="Recipes.Common_Code">
+      <class name="Recipes.FilteredRecipes">
         <methods>
-          <include name="LoadPage"/>
+          <include name="LoadAZRecipes"/>
         </methods>
-      </class> <!-- Recipes.Common_Code -->
+      </class> <!-- Recipes.FilteredRecipes -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->
