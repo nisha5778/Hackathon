@@ -24,20 +24,20 @@ public class FilteredRecipes {
 	private void LoadAZRecipes() throws InterruptedException, IOException {
 		WebElement btnAZ = CommonCode.chromeDriver.findElement(By.xpath("//a[@title='Recipea A to Z']"));
 		btnAZ.click();
-		//LoadRecipes("Q", CommonCode.lstDiabetes, "Diabetes", 0);
-		//LoadRecipes("Q", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
-		//LoadRecipes("Q", CommonCode.lstHypertension, "Hypertension", 2);
-		//LoadRecipes("Q", CommonCode.lstPCOS, "PCOS", 3);
-		CommonCode.CheckForHealthyItems(CommonCode.lstDiabetes, 0);
-		CommonCode.CheckForHealthyItems(CommonCode.lstHypothyroidism, 1);
-		CommonCode.CheckForHealthyItems(CommonCode.lstHypertension, 2);
-		CommonCode.CheckForHealthyItems(CommonCode.lstPCOS, 3);
+		LoadRecipes("J", CommonCode.lstDiabetes, "Diabetes", 0);
+		LoadRecipes("J", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
+		LoadRecipes("J", CommonCode.lstHypertension, "Hypertension", 2);
+		LoadRecipes("J", CommonCode.lstPCOS, "PCOS", 3);
+		CommonCode.CheckForHealthyItems(CommonCode.lstHDiabetes, 0);
+		CommonCode.CheckForHealthyItems(CommonCode.lstHHThyroidism, 1);
+		CommonCode.CheckForHealthyItems(CommonCode.lstHHTension, 2);
+		CommonCode.CheckForHealthyItems(CommonCode.lstHPCOS, 3);
 		
-		CommonCode.CheckForAllergy("Milk", 0);
-		CommonCode.CheckForAllergy("Milk", 1);
-		CommonCode.CheckForAllergy("Egg", 2);
-		CommonCode.CheckForAllergy("Egg", 3);
-		
+		for(int j=0;j<CommonCode.lstAllergies.size();j++) {
+			for(int i=0;i<4;i++) {
+				CommonCode.CheckForAllergy(CommonCode.lstAllergies.get(j), i);
+			}
+		}
 	}
 	
 	//load the recipes according to a letter and for a particular morbidity
@@ -117,7 +117,8 @@ public class FilteredRecipes {
 			bFound = false;
 			
 			//if eliminated ingredients not found in the name, open the recipe details page 
-			CommonCode.chromeDriver.findElement(By.xpath(xPathName)).click();		
+			CommonCode.chromeDriver.findElement(By.xpath(xPathName)).click();	
+			Thread.sleep(2000);
 			ingredients = CommonCode.chromeDriver.findElement(
 					By.xpath(xIngredients)).getText();
 			for (String word: list ) {
@@ -250,7 +251,8 @@ public class FilteredRecipes {
 			cell.setCellValue(strMorbidity);
 			cell=row.createCell(10);
 			cell.setCellValue(url);
-			    
+			cell=row.createCell(11);
+			cell.setCellValue("");
 			//commit the newly added row to the excel and save the excel file
 			FileOutputStream fileOut = new FileOutputStream(CommonCode.strFilteredRecipes);
 			wb.write(fileOut);

@@ -39,16 +39,20 @@ public class CommonCode {
 			"Preparation Method",
 			"Nutrient Values",
 			"Targetted Morbid Conditions",
-			"Recipe URL"
+			"Recipe URL",
+			"Allergies : "
 			};
 	public static List<String> lstHypothyroidism = new ArrayList<String>();
 	public static List<String> lstDiabetes = new ArrayList<String>();
 	public static List<String> lstHypertension = new ArrayList<String>();
 	public static List<String> lstPCOS = new ArrayList<String>();
+	
 	public static List<String> lstHDiabetes = new ArrayList<String>();
 	public static List<String> lstHHThyroidism = new ArrayList<String>();
 	public static List<String> lstHHTension = new ArrayList<String>();
 	public static List<String> lstHPCOS = new ArrayList<String>();
+	
+	public static List<String> lstAllergies = new ArrayList<String>();
 	
 	//load home page of website of tarladalal.com
 	@Test(priority = 1)
@@ -57,7 +61,7 @@ public class CommonCode {
 		optChrome.setAcceptInsecureCerts(true);
 		optChrome.addArguments("--remote-allow-origins=*");
 		optChrome.setImplicitWaitTimeout(Duration.ofSeconds(10));
-		ReadEliminationsFromExcel();
+		ReadDataFromExcel();
 		chromeDriver = new ChromeDriver(optChrome);
 		//chromeDriver = new FirefoxDriver();
 		chromeDriver.get("https://tarladalal.com/");	
@@ -65,7 +69,7 @@ public class CommonCode {
 	}
 
 	//Read the list of eliminated ingredients from excel sheet and store it in the list/array
-	public void ReadEliminationsFromExcel() throws IOException
+	public void ReadDataFromExcel() throws IOException
 	{		
 		//String path = System.getProperty("user.dir")+"\\IngredientsAndComorbidities-ScrapperHackathon.xlsx";
 		String path =System.getProperty("user.dir") + 
@@ -158,7 +162,15 @@ public class CommonCode {
 		    	lstHPCOS.add(strItem.strip());
 		    }
 		}
-		
+		for (i=2;i<lastRow;i++) {
+			row=sheet.getRow(i);
+		    cell=row.getCell(8);
+
+		    strItem = cell.getStringCellValue();
+		    if (!strItem.isBlank()){
+		    	lstAllergies.add(strItem.strip());
+		    }
+		}
 	    workbook.close();	
 	  }
 	
@@ -181,29 +193,29 @@ public class CommonCode {
 			int lastRow=sheet.getLastRowNum();			
 		    for(i=0;i<lastRow;i++){
 		    	row = sheet.getRow(i);		    	
-		    	cell = row.getCell(9);
-		    	if(cell.getStringCellValue().equals("Diabetes")){
-		    		cell = row.getCell(4);
-		    		ingredient = cell.getStringCellValue().toLowerCase();
+		    //	cell = row.getCell(9);
+	//	    	if(cell.getStringCellValue().equals("Diabetes")){
+	    		cell = row.getCell(4);
+	    		ingredient = cell.getStringCellValue().toLowerCase();
 
-		    		for (String item: healthyItems ) {
-				        bFound = ingredient.contains(item.toLowerCase());
-				        if (bFound) {
-				        	XSSFFont font = wb.createFont();
-				        	CellStyle cs = wb.createCellStyle();
-				        	font.setColor(IndexedColors.GREEN.getIndex());
-							font.setBold(true);
-							//font.setColor(new XSSFFont().COLOR_RED);
-							cs.setFont(font);
-							for(int x=0;x<11;x++)
-							{
-								cell = row.getCell(x);
-								cell.setCellStyle(cs);
-							}
-							System.out.println(row.getRowNum() + " : " + item);
-				        	break;
-				    	   	}
-				   	}
+	    		for (String item: healthyItems ) {
+			        bFound = ingredient.contains(item.toLowerCase());
+			        if (bFound) {
+			        	XSSFFont font = wb.createFont();
+			        	CellStyle cs = wb.createCellStyle();
+			        	font.setColor(IndexedColors.GREEN.getIndex());
+						font.setBold(true);
+						//font.setColor(new XSSFFont().COLOR_RED);
+						cs.setFont(font);
+						for(int x=0;x<11;x++)
+						{
+							cell = row.getCell(x);
+							cell.setCellStyle(cs);
+						}
+						System.out.println(row.getRowNum() + " : " + item);
+			        	break;
+			    	   	}
+		//		   	}
 		    		if(!bFound) {
 		    			continue;
 		    		}
@@ -218,6 +230,7 @@ public class CommonCode {
 	}
 	
 	public static void CheckForAllergy(String allergy, int sheetNo) throws IOException {
+		System.out.println(allergy);
 		XSSFRow row;
 		XSSFCell cell;		
 		boolean bFound=false;
@@ -233,22 +246,38 @@ public class CommonCode {
 			FileInputStream myxls = new FileInputStream(CommonCode.strFilteredRecipes);
 			wb = new XSSFWorkbook(myxls);
 		    XSSFSheet sheet = wb.getSheetAt(sheetNo);
-			int lastRow=sheet.getLastRowNum();			
-		    for(i=0;i<lastRow;i++){
+			int lastRow=sheet.getLastRowNum();	
+			
+			System.out.println("sheet no : " + sheetNo);
+			System.out.println("last row : " + lastRow);
+			
+		    for(i=1;i<lastRow;i++){
 		    	row = sheet.getRow(i);		    	
-		    	cell = row.getCell(9);
 	    		cell = row.getCell(4);
 	    		ingredient = cell.getStringCellValue().toLowerCase();	
 		        bFound = ingredient.contains(allergy.toLowerCase());
 		        if (bFound) {
-		        	XSSFFont font = wb.createFont();
-		        	CellStyle cs = wb.createCellStyle();
-		        	font.setColor(IndexedColors.RED.getIndex());
-					font.setBold(true);
-					cs.setFont(font);
-					cell = row.createCell(11);
-					cell.setCellStyle(cs);
-					cell.setCellValue(allergy);
+	//	        	XSSFFont font = wb.createFont();
+		//        	CellStyle cs = wb.createCellStyle();
+		  //      	font.setColor(IndexedColors.RED.getIndex());
+			//		font.setBold(true);
+				//	cs.setFont(font);
+				//	System.out.println(" B last cell no : " + row.getLastCellNum());
+
+					/*if(row.getLastCellNum()<=10) {
+						System.out.println("last cell no : " + row.getLastCellNum());
+						cell = row.createCell(11);
+						System.out.println("Added cell");
+						cell.setCellValue("Allergies - ");
+					}*/
+				//	System.out.println("A last cell no : " + row.getLastCellNum());
+					
+					cell = row.getCell(11);
+					String strPrevVal = cell.getStringCellValue();
+					System.out.println("prev value : " + strPrevVal);
+
+					//cell.setCellStyle(cs);
+					cell.setCellValue(strPrevVal + ", " + allergy);
 					System.out.println(row.getRowNum());
 		        }
 		    }
