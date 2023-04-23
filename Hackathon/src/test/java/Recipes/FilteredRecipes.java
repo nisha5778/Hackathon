@@ -24,10 +24,10 @@ public class FilteredRecipes {
 	private void LoadAZRecipes() throws InterruptedException, IOException {
 		WebElement btnAZ = CommonCode.chromeDriver.findElement(By.xpath("//a[@title='Recipea A to Z']"));
 		btnAZ.click();
-		LoadRecipes("J", CommonCode.lstDiabetes, "Diabetes", 0);
-		LoadRecipes("J", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
-		LoadRecipes("J", CommonCode.lstHypertension, "Hypertension", 2);
-		LoadRecipes("J", CommonCode.lstPCOS, "PCOS", 3);
+		LoadRecipes("Y", CommonCode.lstDiabetes, "Diabetes", 0);
+		LoadRecipes("Y", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
+		LoadRecipes("Y", CommonCode.lstHypertension, "Hypertension", 2);
+		LoadRecipes("Y", CommonCode.lstPCOS, "PCOS", 3);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHDiabetes, 0);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHHThyroidism, 1);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHHTension, 2);

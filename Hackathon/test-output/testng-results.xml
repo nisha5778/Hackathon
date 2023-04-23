@@ -2,18 +2,18 @@
 <testng-results ignored="0" total="2" passed="2" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2023-04-21T19:27:07 CDT" name="Suite" finished-at="2023-04-21T19:43:19 CDT" duration-ms="971561">
+  <suite started-at="2023-04-22T16:04:06 CDT" name="Suite" finished-at="2023-04-22T16:18:58 CDT" duration-ms="892551">
     <groups>
     </groups>
-    <test started-at="2023-04-21T19:27:07 CDT" name="Test" finished-at="2023-04-21T19:43:19 CDT" duration-ms="971561">
+    <test started-at="2023-04-22T16:04:06 CDT" name="Test" finished-at="2023-04-22T16:18:58 CDT" duration-ms="892551">
       <class name="Recipes.CommonCode">
-        <test-method signature="LoadPage()[pri:1, instance:Recipes.CommonCode@9597028]" started-at="2023-04-21T19:27:07 CDT" name="LoadPage" finished-at="2023-04-21T19:27:15 CDT" duration-ms="8031" status="PASS">
+        <test-method signature="LoadPage()[pri:1, instance:Recipes.CommonCode@9597028]" started-at="2023-04-22T16:04:06 CDT" name="LoadPage" finished-at="2023-04-22T16:04:15 CDT" duration-ms="9085" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- LoadPage -->
       </class> <!-- Recipes.CommonCode -->
       <class name="Recipes.FilteredRecipes">
-        <test-method signature="LoadAZRecipes()[pri:2, instance:Recipes.FilteredRecipes@747ddf94]" started-at="2023-04-21T19:27:15 CDT" name="LoadAZRecipes" finished-at="2023-04-21T19:43:19 CDT" duration-ms="963476" status="PASS">
+        <test-method signature="LoadAZRecipes()[pri:2, instance:Recipes.FilteredRecipes@747ddf94]" started-at="2023-04-22T16:04:15 CDT" name="LoadAZRecipes" finished-at="2023-04-22T16:18:58 CDT" duration-ms="883391" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- LoadAZRecipes -->

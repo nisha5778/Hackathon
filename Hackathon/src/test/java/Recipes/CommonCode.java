@@ -21,6 +21,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.testng.annotations.Test;
 
 public class CommonCode {
@@ -62,8 +64,9 @@ public class CommonCode {
 		optChrome.addArguments("--remote-allow-origins=*");
 		optChrome.setImplicitWaitTimeout(Duration.ofSeconds(10));
 		ReadDataFromExcel();
-		chromeDriver = new ChromeDriver(optChrome);
-		//chromeDriver = new FirefoxDriver();
+		//chromeDriver = new ChromeDriver(optChrome);
+		chromeDriver = new FirefoxDriver();
+		//chromeDriver = new InternetExplorerDriver();
 		chromeDriver.get("https://tarladalal.com/");	
 		//chromeDriver.manage().window().maximize();
 	}
@@ -193,8 +196,6 @@ public class CommonCode {
 			int lastRow=sheet.getLastRowNum();			
 		    for(i=0;i<lastRow;i++){
 		    	row = sheet.getRow(i);		    	
-		    //	cell = row.getCell(9);
-	//	    	if(cell.getStringCellValue().equals("Diabetes")){
 	    		cell = row.getCell(4);
 	    		ingredient = cell.getStringCellValue().toLowerCase();
 
@@ -205,7 +206,6 @@ public class CommonCode {
 			        	CellStyle cs = wb.createCellStyle();
 			        	font.setColor(IndexedColors.GREEN.getIndex());
 						font.setBold(true);
-						//font.setColor(new XSSFFont().COLOR_RED);
 						cs.setFont(font);
 						for(int x=0;x<11;x++)
 						{
@@ -215,7 +215,6 @@ public class CommonCode {
 						System.out.println(row.getRowNum() + " : " + item);
 			        	break;
 			    	   	}
-		//		   	}
 		    		if(!bFound) {
 		    			continue;
 		    		}
