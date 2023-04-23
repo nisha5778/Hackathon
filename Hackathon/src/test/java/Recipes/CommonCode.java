@@ -64,8 +64,8 @@ public class CommonCode {
 		optChrome.addArguments("--remote-allow-origins=*");
 		optChrome.setImplicitWaitTimeout(Duration.ofSeconds(10));
 		ReadDataFromExcel();
-		//chromeDriver = new ChromeDriver(optChrome);
-		chromeDriver = new FirefoxDriver();
+		chromeDriver = new ChromeDriver(optChrome);
+		//chromeDriver = new FirefoxDriver();
 		//chromeDriver = new InternetExplorerDriver();
 		chromeDriver.get("https://tarladalal.com/");	
 		//chromeDriver.manage().window().maximize();
