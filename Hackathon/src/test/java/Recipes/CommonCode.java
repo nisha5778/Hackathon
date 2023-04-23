@@ -66,6 +66,7 @@ public class CommonCode {
 		ReadDataFromExcel();
 		chromeDriver = new ChromeDriver(optChrome);
 		//chromeDriver = new FirefoxDriver();
+		//chromeDriver = new FirefoxDriver();
 		//chromeDriver = new InternetExplorerDriver();
 		chromeDriver.get("https://tarladalal.com/");	
 		//chromeDriver.manage().window().maximize();
@@ -256,22 +257,7 @@ public class CommonCode {
 	    		ingredient = cell.getStringCellValue().toLowerCase();	
 		        bFound = ingredient.contains(allergy.toLowerCase());
 		        if (bFound) {
-	//	        	XSSFFont font = wb.createFont();
-		//        	CellStyle cs = wb.createCellStyle();
-		  //      	font.setColor(IndexedColors.RED.getIndex());
-			//		font.setBold(true);
-				//	cs.setFont(font);
-				//	System.out.println(" B last cell no : " + row.getLastCellNum());
-
-					/*if(row.getLastCellNum()<=10) {
-						System.out.println("last cell no : " + row.getLastCellNum());
-						cell = row.createCell(11);
-						System.out.println("Added cell");
-						cell.setCellValue("Allergies - ");
-					}*/
-				//	System.out.println("A last cell no : " + row.getLastCellNum());
-					
-					cell = row.getCell(11);
+		        	cell = row.getCell(11);
 					String strPrevVal = cell.getStringCellValue();
 					System.out.println("prev value : " + strPrevVal);
 

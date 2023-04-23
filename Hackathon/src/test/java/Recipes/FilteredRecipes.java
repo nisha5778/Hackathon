@@ -24,14 +24,16 @@ public class FilteredRecipes {
 	private void LoadAZRecipes() throws InterruptedException, IOException {
 		WebElement btnAZ = CommonCode.chromeDriver.findElement(By.xpath("//a[@title='Recipea A to Z']"));
 		btnAZ.click();
-		LoadRecipes("O", CommonCode.lstDiabetes, "Diabetes", 0);
-		LoadRecipes("O", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
-		LoadRecipes("O", CommonCode.lstHypertension, "Hypertension", 2);
-		LoadRecipes("O", CommonCode.lstPCOS, "PCOS", 3);
+		LoadRecipes("B", CommonCode.lstDiabetes, "Diabetes", 0);
+		LoadRecipes("T", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
+		LoadRecipes("T", CommonCode.lstHypertension, "Hypertension", 2);
+		LoadRecipes("B", CommonCode.lstPCOS, "PCOS", 3);
+		
 		CommonCode.CheckForHealthyItems(CommonCode.lstHDiabetes, 0);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHHThyroidism, 1);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHHTension, 2);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHPCOS, 3);
+		
 		
 		for(int j=0;j<CommonCode.lstAllergies.size();j++) {
 			for(int i=0;i<4;i++) {
@@ -50,7 +52,7 @@ public class FilteredRecipes {
 		int nCount = pages.size()/2;
 		System.out.println("no of pages : " + nCount);
 		int i=0;
-		nCount = 2;
+		nCount = 6;
 		//loop through the pages and check each recipe
 		for(i=1;i<=nCount;i++) {
 			System.out.println("page no. = " + i);
@@ -76,7 +78,7 @@ public class FilteredRecipes {
 		String xPathName="",xPathID="", name="", pTime="", cTime="", id="";
 		String  xPreparationMethod="", xNValues="", xIngredients="";
 		String ingredients="", nutrientValues="", preparationMethod="", url="";
-		//System.out.println("No. of recipes : " + nRecipes);
+		System.out.println("No. of recipes : " + nRecipes);
 		//nRecipes=2;
 		//Scan through all the recipes on the page
 		for(i=1;i<=nRecipes;i++) {
@@ -90,15 +92,26 @@ public class FilteredRecipes {
 			xIngredients = "//*[@id='rcpinglist']";
 			xPreparationMethod = "//*[@id='recipe_small_steps']";
 			xNValues = "//*[@id='rcpnutrients']";
-			//id = CommonCode.chromeDriver.findElement(By.xpath(xPathID)).getText();		
+
+			//get recipe ID
 			List<WebElement> ids = CommonCode.chromeDriver.findElements(By.xpath(xPathID));
 			if(ids.size()>0) {
 				id = ids.get(0).getText();
 			}
-			//System.out.println("id done...");
+			else {
+				continue;
+			}
 			
-			name = CommonCode.chromeDriver.findElement(By.xpath(xPathName)).getText();
-			//System.out.println("name : " + name);
+			//get recipe name
+			List<WebElement> names = CommonCode.chromeDriver.findElements(By.xpath(xPathName));
+			if(names.size()>0) {
+				name = names.get(0).getText();
+			}
+			else {
+				continue;
+			}
+			System.out.println("name : " + name);
+			
 			//check if the name of the recipe has an eliminated ingredient
 			//if yes, set the bFound to true
 			for (String word: list ) {
@@ -117,8 +130,10 @@ public class FilteredRecipes {
 			bFound = false;
 			
 			//if eliminated ingredients not found in the name, open the recipe details page 
-			CommonCode.chromeDriver.findElement(By.xpath(xPathName)).click();	
-			Thread.sleep(2000);
+			System.out.println("xpathname : " + xPathName);
+			CommonCode.chromeDriver.findElement(By.xpath(xPathName)).click();
+			
+			Thread.sleep(3000);
 			ingredients = CommonCode.chromeDriver.findElement(
 					By.xpath(xIngredients)).getText();
 			for (String word: list ) {
@@ -133,6 +148,7 @@ public class FilteredRecipes {
 			//don't go ahead for saving in the excel
 			if (bFound){
 				CommonCode.chromeDriver.navigate().back();// switchTo().window(mainWindowHandle);
+				Thread.sleep(2000);
 				continue;
 			}
 			bFound = false;
@@ -140,6 +156,7 @@ public class FilteredRecipes {
 			//You have reached here, means the recipe does not contain any eliminated ingredients
 			//scrape the recipe details
 			
+			//get preparation time
 			List<WebElement> lstPTime1 = CommonCode.chromeDriver.findElements(
 					By.xpath("//div[@class='tags']/../p[2]/time[1]"));
 			List<WebElement> lstPTime2 = CommonCode.chromeDriver.findElements(
@@ -153,6 +170,7 @@ public class FilteredRecipes {
 
 			}
 			
+			//get cooking time
 			List<WebElement> lstCTime1 = CommonCode.chromeDriver.findElements(
 					By.xpath("//div[@class='tags']/../p[2]/time[2]"));
 			List<WebElement> lstCTime2 = CommonCode.chromeDriver.findElements(
@@ -165,6 +183,7 @@ public class FilteredRecipes {
 				cTime = lstCTime2.get(0).getText();
 			}
 			
+			//get preparation method
 			//calories = chromeDriver.findElement(By.xpath(xPathCalories)).getText();
 			preparationMethod = CommonCode.chromeDriver.findElement(By.xpath(xPreparationMethod)).getText();
 			
@@ -178,14 +197,16 @@ public class FilteredRecipes {
 			}
 			url = CommonCode.chromeDriver.getCurrentUrl();
 			
-			//Now it's tome to save the recipe in the excel
+			//Now it's time to save the recipe in the excel
 			if(!bFound) {
 			Path p = Paths.get(CommonCode.strFilteredRecipes);
 			boolean bFileExists = Files.exists(p);
 			//System.out.println("path: " + p.toString());
 		    //System.out.println("File exists : " + bFileExists); 
 		    XSSFWorkbook wb;
+		    
 		    //if file already exists, check for the last row number
+		    //and add a new row at the end
 			if(bFileExists) {
 				FileInputStream myxls = new FileInputStream(CommonCode.strFilteredRecipes);
 				wb = new XSSFWorkbook(myxls);
@@ -196,7 +217,8 @@ public class FilteredRecipes {
 			    row = sheet.createRow(++lastRow);
 				}
 			
-			//if file doesn't exist, create a new file and add headers as the first row
+			//if file doesn't exist, 
+			//create a new file and add headers as the first row
 			else {
 				wb = new XSSFWorkbook();
 				CreationHelper ch = wb.getCreationHelper();
@@ -223,8 +245,6 @@ public class FilteredRecipes {
 					}
 				}
 				XSSFSheet sheet = wb.getSheet(strMorbidity);
-
-			    //System.out.println("new file"); 
 				row=sheet.createRow(1);
 			}
 			
@@ -253,6 +273,7 @@ public class FilteredRecipes {
 			cell.setCellValue(url);
 			cell=row.createCell(11);
 			cell.setCellValue("");
+			
 			//commit the newly added row to the excel and save the excel file
 			FileOutputStream fileOut = new FileOutputStream(CommonCode.strFilteredRecipes);
 			wb.write(fileOut);
