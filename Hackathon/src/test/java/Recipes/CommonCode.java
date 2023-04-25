@@ -56,7 +56,7 @@ public class CommonCode {
 	
 	public static List<String> lstAllergies = new ArrayList<String>();
 	
-	//load home page of website of tarladalal.com
+	//load home page of web site of tarladalal.com
 	@Test(priority = 1)
 	private void LoadPage() throws InterruptedException, IOException {		
 		ChromeOptions optChrome = new ChromeOptions();
@@ -66,16 +66,14 @@ public class CommonCode {
 		ReadDataFromExcel();
 		chromeDriver = new ChromeDriver(optChrome);
 		//chromeDriver = new FirefoxDriver();
-		//chromeDriver = new FirefoxDriver();
 		//chromeDriver = new InternetExplorerDriver();
 		chromeDriver.get("https://tarladalal.com/");	
-		//chromeDriver.manage().window().maximize();
+		chromeDriver.manage().window().maximize();
 	}
 
 	//Read the list of eliminated ingredients from excel sheet and store it in the list/array
 	public void ReadDataFromExcel() throws IOException
 	{		
-		//String path = System.getProperty("user.dir")+"\\IngredientsAndComorbidities-ScrapperHackathon.xlsx";
 		String path =System.getProperty("user.dir") + 
 				"\\src/test\\resources\\ExcelFiles\\IngredientsAndComorbidities-ScrapperHackathon.xlsx";
 		//System.out.println(path);
@@ -91,6 +89,7 @@ public class CommonCode {
 		XSSFCell cell;
 		String strItem;
 		
+		//read all the data from xls and add to various lists
 		for (i=2;i<lastRow;i++) {
 			row = sheet.getRow(i);
 		    cell=row.getCell(0);
@@ -200,8 +199,11 @@ public class CommonCode {
 	    		cell = row.getCell(4);
 	    		ingredient = cell.getStringCellValue().toLowerCase();
 
+	    		//check for healthy ingredients 
 	    		for (String item: healthyItems ) {
 			        bFound = ingredient.contains(item.toLowerCase());
+			        
+			        //if healthy ingredient found, change the color of the row to green
 			        if (bFound) {
 			        	XSSFFont font = wb.createFont();
 			        	CellStyle cs = wb.createCellStyle();
@@ -216,12 +218,14 @@ public class CommonCode {
 						System.out.println(row.getRowNum() + " : " + item);
 			        	break;
 			    	   	}
+			        //and continue to the next healthy ingredient
 		    		if(!bFound) {
 		    			continue;
 		    		}
 		    		bFound = false;	
 		    	}
 		    }
+		    //save the excel file
 			FileOutputStream fileOut = new FileOutputStream(CommonCode.strFilteredRecipes);
 			wb.write(fileOut);
 			fileOut.close();
@@ -255,13 +259,16 @@ public class CommonCode {
 		    	row = sheet.getRow(i);		    	
 	    		cell = row.getCell(4);
 	    		ingredient = cell.getStringCellValue().toLowerCase();	
+	    		
+	    		//check for the allergy ingredient
 		        bFound = ingredient.contains(allergy.toLowerCase());
+		        
+		        //if healthy ingredient found, add it at the end column of the row
 		        if (bFound) {
 		        	cell = row.getCell(11);
 					String strPrevVal = cell.getStringCellValue();
 					System.out.println("prev value : " + strPrevVal);
 
-					//cell.setCellStyle(cs);
 					cell.setCellValue(strPrevVal + ", " + allergy);
 					System.out.println(row.getRowNum());
 		        }

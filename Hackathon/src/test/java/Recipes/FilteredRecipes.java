@@ -22,19 +22,24 @@ import org.testng.annotations.Test;
 public class FilteredRecipes {
 	@Test(priority = 2)
 	private void LoadAZRecipes() throws InterruptedException, IOException {
+		//open page containing recipes from A to Z
 		WebElement btnAZ = CommonCode.chromeDriver.findElement(By.xpath("//a[@title='Recipea A to Z']"));
 		btnAZ.click();
-		LoadRecipes("P", CommonCode.lstDiabetes, "Diabetes", 0);
-		LoadRecipes("Q", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
-		LoadRecipes("R", CommonCode.lstHypertension, "Hypertension", 2);
-		LoadRecipes("S", CommonCode.lstPCOS, "PCOS", 3);
 		
+		//call the function which scans through the recipes
+		//according to the letter provided
+		LoadRecipes("Q", CommonCode.lstDiabetes, "Diabetes", 0);
+		LoadRecipes("Q", CommonCode.lstHypothyroidism, "Hypothyroidism", 1);
+		LoadRecipes("Q", CommonCode.lstHypertension, "Hypertension", 2);
+		LoadRecipes("Q", CommonCode.lstPCOS, "PCOS", 3);
+		
+		//check if there are any recipes with healthy ingredients
 		CommonCode.CheckForHealthyItems(CommonCode.lstHDiabetes, 0);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHHThyroidism, 1);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHHTension, 2);
 		CommonCode.CheckForHealthyItems(CommonCode.lstHPCOS, 3);
 		
-		
+		//check the filtered recipes for allergies
 		for(int j=0;j<CommonCode.lstAllergies.size();j++) {
 			for(int i=0;i<4;i++) {
 				CommonCode.CheckForAllergy(CommonCode.lstAllergies.get(j), i);
@@ -52,7 +57,7 @@ public class FilteredRecipes {
 		int nCount = pages.size()/2;
 		System.out.println("no of pages : " + nCount);
 		int i=0;
-		nCount = 6;
+		nCount = 3;
 		//loop through the pages and check each recipe
 		for(i=1;i<=nCount;i++) {
 			System.out.println("page no. = " + i);
